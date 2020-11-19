@@ -2,21 +2,13 @@
 
 Pytorch implementation for the paper entitled **"Grouped Multi-Scale Network for Real-world Image Denoising"**
 
-This repo contains our image synthesis, model training and results submission code.
-
-We simplified the training code since the original training code applied some methods from our unpublished work.
+We simplified the code since the original code applied some methods from our unpublished work.
 
 The modified code may lower the performance slightly, but it is easy to follow.
 
-The datasets and pre-trained model will be uploaded soon.
-
 ## Data
 
-SIDD dataset: [train]() and [valid]().
-
-Generated synthetic dataset: [syn]().
-
-Pretrained model: [GMSNet-A]().
+Download the dataset and pretrained model from [GoogleDrive](https://drive.google.com/drive/folders/1n2NKB7z2r13HAqFUNe4UDjq7d1JoGhU0?usp=sharing).
 
 Extract the files to `data` folder and `save_model` folder as follow:
 
@@ -45,8 +37,6 @@ We provide the code to generate a synthetic dataset using clean images.
 The code you can find in `utils/syn`.
 
 ## Train
-
-First, adjust the training hyperparameters based on the hardware performance (44 GB GPU memory is necessary for current settings).
 
 Train the GMSNet model:
 
@@ -78,7 +68,7 @@ Evaluate the trained model:
 python submit_dnd.py --model ... (model name)
 ```
 
-Further boost score using two useful tricks (self-ensemble and input padding):
+Further boost score using two useful tricks (self-ensemble and larger patch):
 
 ```
 python submit_dnd.py --model ... (model name) --ensemble
