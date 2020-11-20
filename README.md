@@ -1,10 +1,6 @@
 # GMSNet
 
-Pytorch implementation for the paper entitled **"Grouped Multi-Scale Network for Real-world Image Denoising"**
-
-We simplified the code since the original code applied some methods from our unpublished work.
-
-The modified code may lower the performance slightly, but it is easy to follow.
+A simplified PyTorch implementation of our [GMSNet](https://doi.org/10.1109/LSP.2020.3039726).
 
 ## Data
 
@@ -38,13 +34,7 @@ The code you can find in `utils/syn`.
 
 ## Train
 
-Train the GMSNet model:
-
-```
-python train.py
-```
-
-Or you can copy the template code to build your own model:
+Copy the template code to build your own model:
 
 ```
 ~/
@@ -54,7 +44,7 @@ Or you can copy the template code to build your own model:
     ... (your model)
 ```
 
-Then you can train your own model:
+Train your own model:
 
 ```
 python train.py --model ... (model name)
@@ -62,13 +52,7 @@ python train.py --model ... (model name)
 
 ## Submit
 
-Evaluate the trained model:
-
-```
-python submit_dnd.py --model ... (model name)
-```
-
-Further boost score using two useful tricks (self-ensemble and larger patch):
+Evaluate the trained model (`--ensemble` for higher score):
 
 ```
 python submit_dnd.py --model ... (model name) --ensemble
