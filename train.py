@@ -89,15 +89,15 @@ if __name__ == '__main__':
 	criterion = nn.L1Loss()
 	criterion.cuda()
 
-	train_dataset1 = Base('./data/SIDD_train/', 320, patch_size=args.ps)
+	train_dataset1 = Base('./data/SIDD_train/', 320, args.ps)
 	train_loader1 = torch.utils.data.DataLoader(
 		train_dataset1, batch_size=(args.bs-args.bs//4), shuffle=True, num_workers=8, pin_memory=True, drop_last=True)
 
-	train_dataset2 = Base('./data/Syn_train/', 100, patch_size=args.ps)
+	train_dataset2 = Base('./data/Syn_train/', 100, args.ps)
 	train_loader2 = torch.utils.data.DataLoader(
 		train_dataset2, batch_size=(args.bs//4), shuffle=True, num_workers=8, pin_memory=True, drop_last=True)
 
-	valid_dataset = Base('./data/SIDD_valid/', 1280, cropped=False)
+	valid_dataset = Base('./data/SIDD_valid/', 1280, 0)
 	valid_loader = torch.utils.data.DataLoader(
 		valid_dataset, batch_size=args.bs, num_workers=8, pin_memory=True)
 

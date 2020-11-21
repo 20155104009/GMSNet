@@ -34,9 +34,8 @@ def get_patch(clean_img, noise_img, patch_size):
 
 
 class Base(Dataset):
-	def __init__(self, root_dir, sample_num, patch_size=128, cropped=True):
+	def __init__(self, root_dir, sample_num, patch_size=128):
 		self.patch_size = patch_size
-		self.cropped = cropped
 
 		folders = glob.glob(root_dir + '/*')
 		folders.sort()
@@ -62,7 +61,7 @@ class Base(Dataset):
 		clean_img = read_img(clean_fn)
 		noise_img = read_img(clean_fn.replace('GT_SRGB', 'NOISY_SRGB'))
 
-		if self.cropped:
+		if self.patch_size > 0:
 			clean_img, noise_img = get_patch(clean_img, noise_img, self.patch_size)
 
 		clean_img_chw = hwc_to_chw(clean_img)

@@ -67,7 +67,5 @@ def denoise_srgb(model, data_folder, out_folder, ensemble=False):
             save_file = os.path.join(out_folder, '%04d_%02d.mat'%(i+1,k+1))
             sio.savemat(save_file, {'Idenoised_crop': Idenoised_crop})
 
-            # io.imsave(os.path.join(out_folder, '%04d_%02d.png'%(i+1,k+1)), np.uint8(Idenoised_crop * 255))
-
             print('%s crop %d/%d' % (filename, k+1, 20))
         print('[%d/%d] %s done\n' % (i+1, 50, filename))
