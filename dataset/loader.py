@@ -34,19 +34,17 @@ def get_patch(clean_img, noise_img, patch_size):
 
 
 class Base(Dataset):
-	def __init__(self, root_dir, sample_num, patch_size=128):
+	def __init__(self, root_dir, sample_num, patch_size=0):
 		self.patch_size = patch_size
 
-		folders = glob.glob(root_dir + '/*')
-		folders.sort()
+		folders = sorted(glob.glob(root_dir + '/*'))
 
 		self.clean_fns = [None] * sample_num
 		for i in range(sample_num):
 			self.clean_fns[i] = []
 
 		for ind, folder in enumerate(folders):
-			clean_imgs = glob.glob(folder + '/*GT_SRGB*')
-			clean_imgs.sort()
+			clean_imgs = sorted(glob.glob(folder + '/*GT_SRGB*'))
 
 			for clean_img in clean_imgs:
 				self.clean_fns[ind % sample_num].append(clean_img)

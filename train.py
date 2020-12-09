@@ -5,6 +5,7 @@ import argparse
 import torch
 import torch.nn as nn
 from skimage import io
+from tqdm import tqdm
 
 from utils import AverageMeter, chw_to_hwc, hwc_to_chw
 from dataset.loader import Base
@@ -14,19 +15,20 @@ parser = argparse.ArgumentParser(description = 'Train')
 parser.add_argument('--model', default='gmsnet', type=str, help='model name')
 parser.add_argument('--bs', default=32, type=int, help='batch size')
 parser.add_argument('--ps', default=128, type=int, help='patch size')
+parser.add_argument('--nw', default=8, type=int, help='number of workers')
 parser.add_argument('--lr', default=2e-4, type=float, help='learning rate')
 parser.add_argument('--epochs', default=6000, type=int, help='sum of epochs')
 parser.add_argument('--eval_freq', default=100, type=int, help='evaluation frequency')
 args = parser.parse_args()
 
 
-def train(train_loader1, train_loader2, model, criterion, optimizer):
+def train(loader1, loader2, model, criterion, optimizer):
 	losses = AverageMeter()
 	model.train()
 
-	for (train_pairs1, train_pairs2) in zip(train_loader1, train_loader2):
-		noise_img = torch.cat([train_pairs1[0], train_pairs2[0]], dim=0)
-		clean_img = torch.cat([train_pairs1[1], train_pairs2[1]], dim=0)
+	for (pairs1, pairs2) in tqdm(zip(loader1, loader2), total=min(len(loader1), len(loader2))):
+		noise_img = torch.cat([pairs1[0], pairs2[0]], dim=0)
+		clean_img = torch.cat([pairs1[1], pairs2[1]], dim=0)
 
 		input_var = noise_img.cuda()
 		target_var = clean_img.cuda()
@@ -42,11 +44,11 @@ def train(train_loader1, train_loader2, model, criterion, optimizer):
 	return losses.avg
 
 
-def valid(valid_loader, model, criterion):
+def valid(loader, model, criterion):
 	losses = AverageMeter()
 	model.train()
 
-	for (noise_img, clean_img) in valid_loader:
+	for (noise_img, clean_img) in tqdm(loader):
 		input_var = noise_img.cuda()
 		target_var = clean_img.cuda()
 
@@ -91,15 +93,15 @@ if __name__ == '__main__':
 
 	train_dataset1 = Base('./data/SIDD_train/', 320, args.ps)
 	train_loader1 = torch.utils.data.DataLoader(
-		train_dataset1, batch_size=(args.bs-args.bs//4), shuffle=True, num_workers=8, pin_memory=True, drop_last=True)
+		train_dataset1, batch_size=(args.bs-args.bs//4), shuffle=True, num_workers=args.nw, pin_memory=True, drop_last=True)
 
 	train_dataset2 = Base('./data/Syn_train/', 100, args.ps)
 	train_loader2 = torch.utils.data.DataLoader(
-		train_dataset2, batch_size=(args.bs//4), shuffle=True, num_workers=8, pin_memory=True, drop_last=True)
+		train_dataset2, batch_size=(args.bs//4), shuffle=True, num_workers=args.nw, pin_memory=True, drop_last=True)
 
-	valid_dataset = Base('./data/SIDD_valid/', 1280, 0)
+	valid_dataset = Base('./data/SIDD_valid/', 1280)
 	valid_loader = torch.utils.data.DataLoader(
-		valid_dataset, batch_size=args.bs, num_workers=8, pin_memory=True)
+		valid_dataset, batch_size=args.bs, num_workers=args.nw, pin_memory=True)
 
 	for epoch in range(cur_epoch, args.epochs + 1):
 		train_loss = train(train_loader1, train_loader2, model, criterion, optimizer)
